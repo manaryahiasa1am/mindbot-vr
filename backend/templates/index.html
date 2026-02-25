@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div
+      id="app"
+      data-maps-key="{{ maps_api_key }}"
+      data-center-lat="{{ beni_suef_center.lat }}"
+      data-center-lng="{{ beni_suef_center.lng }}"
+    >
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">
+            <span class="logo-dot"></span>
+            <span class="logo-dot"></span>
+            <span class="logo-dot"></span>
+          </div>
+          <div>
+            <div class="brand-title">{{ app_name }}</div>
+            <div class="brand-subtitle">Smart Medical Web System • Beni Suef, Egypt</div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button id="btnReport" class="btn btn-secondary" type="button">Generate PDF Report</button>
+          <button id="btnSOS" class="btn btn-danger" type="button">
+            <span class="sos-pulse"></span>
+            Emergency SOS
+          </button>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Vital Monitoring</div>
+            <div class="panel-badge">
+              <span class="hb-icon" aria-hidden="true"></span>
+              <span>Live</span>
+            </div>
+          </div>
+
+          <div class="cards">
+            <article class="card">
+              <div class="card-top">
+                <div class="card-label">Pulse BPM</div>
+                <div class="card-icon">♥</div>
+              </div>
+              <div class="card-value">
+                <span id="pulseValue">--</span>
+                <span class="card-unit">BPM</span>
+              </div>
+              <div class="card-meta">
+                <span id="pulseAlert" class="pill pill-ok">Normal</span>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <div class="card-label">Temperature</div>
+                <div class="card-icon">℃</div>
+              </div>
+              <div class="card-value">
+                <span id="tempValue">--</span>
+                <span class="card-unit">°C</span>
+              </div>
+              <div class="card-meta">
+                <span id="tempAlert" class="pill pill-ok">Normal</span>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <div class="card-label">Oxygen</div>
+                <div class="card-icon">O₂</div>
+              </div>
+              <div class="card-value">
+                <span id="oxygenValue">--</span>
+                <span class="card-unit">%</span>
+              </div>
+              <div class="card-meta">
+                <span class="pill pill-ok">Tracking</span>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-top">
+                <div class="card-label">Air Quality</div>
+                <div class="card-icon">AQ</div>
+              </div>
+              <div class="card-value">
+                <span id="airValue">--</span>
+                <span class="card-unit">PPM</span>
+              </div>
+              <div class="card-meta">
+                <span class="pill pill-ok">Tracking</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="chart-wrap">
+            <div class="chart-title">Pulse History</div>
+            <canvas id="pulseChart" height="110"></canvas>
+          </div>
+
+          <div class="map-wrap">
+            <div class="panel-header">
+              <div class="panel-title">Beni Suef Map</div>
+              <div class="panel-hint">Nearest hospital routing simulation</div>
+            </div>
+            <div id="map" class="map"></div>
+            <div id="mapFallback" class="map-fallback hidden"></div>
+          </div>
+
+          <div class="directory">
+            <div class="panel-header">
+              <div class="panel-title">Hospital Directory</div>
+              <div class="panel-hint">Beni Suef phone numbers</div>
+            </div>
+            <div id="hospitalList" class="hospital-list"></div>
+          </div>
+        </section>
+
+        <section class="panel panel-chat">
+          <div class="panel-header">
+            <div class="panel-title">MindBot Assistant</div>
+            <div class="panel-hint">Describe symptoms in your own words</div>
+          </div>
+
+          <div id="chatMessages" class="chat-messages" role="log" aria-live="polite"></div>
+
+          <form id="chatForm" class="chat-form" autocomplete="off">
+            <input
+              id="chatInput"
+              class="chat-input"
+              type="text"
+              placeholder="Example: headache and fever for 2 days…"
+              maxlength="2000"
+            />
+            <button class="btn btn-primary" type="submit">Send</button>
+          </form>
+
+          <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
+

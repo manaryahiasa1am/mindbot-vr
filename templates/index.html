@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }}</title>
+    <meta name="color-scheme" content="dark light" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div
+      id="app"
+      class="app-shell"
+      data-maps-key="{{ maps_api_key }}"
+      data-center-lat="{{ beni_suef_center.lat }}"
+      data-center-lng="{{ beni_suef_center.lng }}"
+    >
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">
+            <span class="logo-dot"></span>
+            <span class="logo-dot"></span>
+            <span class="logo-dot"></span>
+          </div>
+          <div>
+            <div class="brand-title">{{ app_name }}</div>
+            <div class="brand-subtitle">Hospital-grade AI Monitoring • Beni Suef, Egypt</div>
+          </div>
+        </div>
+
+        <div class="status">
+          <div class="status-pill" id="riskPill">
+            <span class="status-indicator" id="riskIndicator"></span>
+            <span id="riskText">Risk: --</span>
+          </div>
+          <div class="status-meta" id="riskMeta">Score: --</div>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="btnTheme" class="btn btn-secondary" type="button" aria-label="Toggle theme">Theme</button>
+          <a class="btn btn-secondary" href="/admin" rel="noopener">Admin</a>
+          <button id="btnReport" class="btn btn-secondary" type="button">PDF Report</button>
+          <button id="btnSOS" class="btn btn-danger" type="button">
+            <span class="sos-pulse"></span>
+            Emergency SOS
+          </button>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Vital Monitoring</div>
+            <div class="panel-badge">
+              <span class="hb-icon" aria-hidden="true"></span>
+              <span id="liveLabel">Live</span>
+            </div>
+          </div>
+
+          <div class="cards">
+            <article class="card" data-vital="pulse">
+              <div class="card-top">
+                <div class="card-label">Pulse</div>
+                <div class="card-icon heartbeat" aria-hidden="true">♥</div>
+              </div>
+              <div class="card-value">
+                <span id="pulseValue">--</span>
+                <span class="card-unit">BPM</span>
+              </div>
+              <div class="card-meta">
+                <span id="pulseAlert" class="pill pill-ok">Normal</span>
+              </div>
+            </article>
+
+            <article class="card" data-vital="temp">
+              <div class="card-top">
+                <div class="card-label">Temperature</div>
+                <div class="card-icon" aria-hidden="true">℃</div>
+              </div>
+              <div class="card-value">
+                <span id="tempValue">--</span>
+                <span class="card-unit">°C</span>
+              </div>
+              <div class="card-meta">
+                <span id="tempAlert" class="pill pill-ok">Normal</span>
+              </div>
+            </article>
+
+            <article class="card" data-vital="o2">
+              <div class="card-top">
+                <div class="card-label">Oxygen</div>
+                <div class="card-icon" aria-hidden="true">O₂</div>
+              </div>
+              <div class="card-value">
+                <span id="oxygenValue">--</span>
+                <span class="card-unit">%</span>
+              </div>
+              <div class="card-meta">
+                <span class="pill pill-ok">Tracking</span>
+              </div>
+            </article>
+
+            <article class="card" data-vital="air">
+              <div class="card-top">
+                <div class="card-label">Air Quality</div>
+                <div class="card-icon" aria-hidden="true">AQ</div>
+              </div>
+              <div class="card-value">
+                <span id="airValue">--</span>
+                <span class="card-unit">PPM</span>
+              </div>
+              <div class="card-meta">
+                <span class="pill pill-ok">Tracking</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="chart-wrap">
+            <div class="chart-title">Real-time Pulse (ICU Monitor)</div>
+            <canvas id="pulseChart" height="120"></canvas>
+          </div>
+
+          <div class="split">
+            <div class="panel-sub">
+              <div class="panel-header">
+                <div class="panel-title">Interactive Map</div>
+                <div class="panel-hint">Beni Suef • nearest hospital routing simulation</div>
+              </div>
+              <div id="map" class="map"></div>
+              <div id="mapFallback" class="map-fallback hidden"></div>
+              <div class="map-foot" id="sosResult"></div>
+            </div>
+
+            <div class="panel-sub">
+              <div class="panel-header">
+                <div class="panel-title">Hospital Directory</div>
+                <div class="panel-hint">Beni Suef phone numbers</div>
+              </div>
+              <div id="hospitalList" class="hospital-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-chat">
+          <div class="panel-header">
+            <div class="panel-title">Triage Assistant</div>
+            <div class="panel-hint">Multi-symptom detection & risk scoring</div>
+          </div>
+
+          <div id="chatMessages" class="chat-messages" role="log" aria-live="polite"></div>
+
+          <form id="chatForm" class="chat-form" autocomplete="off">
+            <div class="input-wrap">
+              <input
+                id="chatInput"
+                class="chat-input"
+                type="text"
+                placeholder="Example: fever + cough + fatigue for 2 days…"
+                maxlength="2000"
+              />
+              <div id="aiLoading" class="ai-loading hidden" aria-hidden="true">
+                <span class="spinner"></span>
+                <span>Analyzing…</span>
+              </div>
+            </div>
+            <button id="btnSend" class="btn btn-primary" type="submit">Send</button>
+          </form>
+
+          <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
+

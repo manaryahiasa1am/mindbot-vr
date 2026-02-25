@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_name }} • Admin</title>
+    <meta name="color-scheme" content="dark light" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+  </head>
+  <body>
+    <div class="admin-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">
+            <span class="logo-dot"></span>
+            <span class="logo-dot"></span>
+            <span class="logo-dot"></span>
+          </div>
+          <div>
+            <div class="brand-title">{{ app_name }} • Admin</div>
+            <div class="brand-subtitle">Protected endpoint access via ADMIN_TOKEN</div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <a class="btn btn-secondary" href="/" rel="noopener">Back</a>
+        </div>
+      </header>
+
+      <main class="admin-grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Dashboard</div>
+            <div class="panel-hint">Totals and analytics</div>
+          </div>
+
+          <div class="admin-form">
+            <label class="admin-label" for="adminToken">Admin Token</label>
+            <input id="adminToken" class="chat-input" type="password" placeholder="Set ADMIN_TOKEN on server" />
+            <div class="admin-actions">
+              <button id="btnLoadStats" class="btn btn-primary" type="button">Load Stats</button>
+              <button id="btnExport" class="btn btn-secondary" type="button">Export CSV</button>
+            </div>
+          </div>
+
+          <div class="admin-stats">
+            <div class="stat">
+              <div class="stat-label">Total Users</div>
+              <div class="stat-value" id="statUsers">--</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Emergencies</div>
+              <div class="stat-value" id="statEmergencies">--</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Average Risk Score</div>
+              <div class="stat-value" id="statAvg">--</div>
+            </div>
+          </div>
+
+          <div id="adminToast" class="toast hidden" role="status" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+  </body>
+</html>
+
